@@ -175,6 +175,25 @@
       display: block;
     }
 
+    .games-inner-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .search-bar {
+      width: 80%;
+      max-width: 500px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background-color: #222;
+      color: white;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+
     .game-button {
       display: inline-block;
       margin: 15px;
@@ -258,23 +277,9 @@
       border-radius: 8px;
       cursor: pointer;
     }
-
-    /* Search Bar Styling */
-    .search-bar {
-      width: 80%;
-      max-width: 500px;
-      padding: 10px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      border: 1px solid #333;
-      background-color: #222;
-      color: white;
-      font-size: 1.2em;
-    }
   </style>
 </head>
 <body>
-  <!-- Loading Overlay -->
   <div class="loading-overlay">
     <div class="loading-bar-container">
       <div class="loading-bar"></div>
@@ -287,44 +292,40 @@
 
   <!-- Navigation Tabs -->
   <div class="nav-tabs">
-    <div class="nav-tab" id="homeTab">
-      <i class="fas fa-home"></i> Home
-    </div>
-    <div class="nav-tab" id="gamesTab">
-      <i class="fas fa-gamepad"></i> Games
-    </div>
-    <div class="nav-tab" id="searchTab">
-      <i class="fas fa-search"></i> Search
-    </div>
+    <div class="nav-tab" id="homeTab"><i class="fas fa-home"></i> Home</div>
+    <div class="nav-tab" id="gamesTab"><i class="fas fa-gamepad"></i> Games</div>
+    <div class="nav-tab" id="searchTab"><i class="fas fa-search"></i> Search</div>
   </div>
 
-  <!-- Games Page -->
+  <!-- Games Section -->
   <div id="gamesContent" class="content-section">
-    <!-- Search Bar Above Games -->
-    <input type="text" class="search-bar" id="searchGames" placeholder="Search games..." />
+    <div class="games-inner-wrapper">
+      <input type="text" class="search-bar" id="searchGames" placeholder="Search games..." />
 
-    <!-- Game Buttons -->
-    <div class="game-button" data-src="/play/liquid/liquid.html">
-      <div class="image-wrapper">
-        <img src="/img/liquid.jpg" alt="Liquid Soccer">
-        <div class="game-title">Liquid Soccer</div>
+      <div class="game-button" data-src="/play/liquid/liquid.html">
+        <div class="image-wrapper">
+          <img src="/img/liquid.jpg" alt="Liquid Soccer">
+          <div class="game-title">Liquid Soccer</div>
+        </div>
       </div>
-    </div>
-    <div class="game-button" data-src="/play/tag/tag.html">
-      <div class="image-wrapper">
-        <img src="/img/splash.jpg" alt="Tag">
-        <div class="game-title">Tag</div>
+
+      <div class="game-button" data-src="/play/tag/tag.html">
+        <div class="image-wrapper">
+          <img src="/img/splash.jpg" alt="Tag">
+          <div class="game-title">Tag</div>
+        </div>
       </div>
-    </div>
-    <div class="game-button" data-src="/files/basketrandom/index.html">
-      <div class="image-wrapper">
-        <img src="/files/basketrandom/splash.jpeg" alt="Basket Random">
-        <div class="game-title">Basket Random</div>
+
+      <div class="game-button" data-src="/files/basketrandom/index.html">
+        <div class="image-wrapper">
+          <img src="/files/basketrandom/splash.jpeg" alt="Basket Random">
+          <div class="game-title">Basket Random</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Fullscreen Game Iframe Overlay -->
+  <!-- Game Iframe Overlay -->
   <div id="iframeOverlay">
     <button onclick="closeIframe()">Close</button>
     <iframe id="gameIframe" src="" allowfullscreen></iframe>
@@ -378,14 +379,9 @@
     searchInput.addEventListener('input', function () {
       const query = searchInput.value.toLowerCase();
       const games = document.querySelectorAll('.game-button');
-
       games.forEach(game => {
-        const gameTitle = game.querySelector('.game-title').textContent.toLowerCase();
-        if (gameTitle.includes(query)) {
-          game.style.display = 'inline-block';
-        } else {
-          game.style.display = 'none';
-        }
+        const title = game.querySelector('.game-title').textContent.toLowerCase();
+        game.style.display = title.includes(query) ? 'inline-block' : 'none';
       });
     });
   </script>
