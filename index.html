@@ -257,6 +257,19 @@
       border-radius: 8px;
       cursor: pointer;
     }
+
+    /* Search Bar Styling */
+    .search-bar {
+      width: 80%;
+      max-width: 500px;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background-color: #222;
+      color: white;
+      font-size: 1.2em;
+    }
   </style>
 </head>
 <body>
@@ -286,21 +299,22 @@
 
   <!-- Games Page -->
   <div id="gamesContent" class="content-section">
+    <input type="text" class="search-bar" id="searchGames" placeholder="Search games..." />
     <div class="game-button" data-src="/play/liquid/liquid.html">
       <div class="image-wrapper">
-        <img src="/img/liquid.jpg" alt="Monkey Mart">
+        <img src="/img/liquid.jpg" alt="Liquid Soccer">
         <div class="game-title">Liquid Soccer</div>
       </div>
     </div>
     <div class="game-button" data-src="/play/tag/tag.html">
       <div class="image-wrapper">
-        <img src="/img/splash.jpg" alt="Game 2">
+        <img src="/img/splash.jpg" alt="Tag">
         <div class="game-title">Tag</div>
       </div>
     </div>
     <div class="game-button" data-src="/files/basketrandom/index.html">
       <div class="image-wrapper">
-        <img src="/files/basketrandom/splash.jpeg" alt="Game 3">
+        <img src="/files/basketrandom/splash.jpeg" alt="Basket Random">
         <div class="game-title">Basket Random</div>
       </div>
     </div>
@@ -360,6 +374,22 @@
       iframe.src = '';
       overlay.style.display = 'none';
     }
+
+    // Search Functionality
+    const searchInput = document.getElementById('searchGames');
+    searchInput.addEventListener('input', function () {
+      const query = searchInput.value.toLowerCase();
+      const games = document.querySelectorAll('.game-button');
+
+      games.forEach(game => {
+        const gameTitle = game.querySelector('.game-title').textContent.toLowerCase();
+        if (gameTitle.includes(query)) {
+          game.style.display = 'inline-block';
+        } else {
+          game.style.display = 'none';
+        }
+      });
+    });
   </script>
 </body>
 </html>
