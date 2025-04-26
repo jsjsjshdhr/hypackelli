@@ -147,7 +147,7 @@
       color: white;
       border-radius: 10px;
       margin-top: 20px;
-      max-width: 80vw;
+      max-width: 90vw;
       text-align: center;
     }
 
@@ -166,7 +166,6 @@
       padding-top: 80px;
       box-sizing: border-box;
       overflow-y: auto;
-      text-align: center;
       display: none;
       padding-bottom: 20px;
     }
@@ -182,6 +181,13 @@
       gap: 20px;
     }
 
+    .games-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
     .search-bar {
       width: 80%;
       max-width: 500px;
@@ -191,12 +197,10 @@
       background-color: #222;
       color: white;
       font-size: 1.2em;
-      margin-bottom: 10px;
     }
 
     .game-button {
       display: inline-block;
-      margin: 15px;
       cursor: pointer;
       border-radius: 15px;
       overflow: hidden;
@@ -302,30 +306,32 @@
     <div class="games-inner-wrapper">
       <input type="text" class="search-bar" id="searchGames" placeholder="Search games..." />
 
-      <div class="game-button" data-src="/play/liquid/liquid.html">
-        <div class="image-wrapper">
-          <img src="/img/liquid.jpg" alt="Liquid Soccer">
-          <div class="game-title">Liquid Soccer</div>
+      <div class="games-list">
+        <div class="game-button" data-src="/play/liquid/liquid.html">
+          <div class="image-wrapper">
+            <img src="/img/liquid.jpg" alt="Liquid Soccer">
+            <div class="game-title">Liquid Soccer</div>
+          </div>
         </div>
-      </div>
 
-      <div class="game-button" data-src="/play/tag/tag.html">
-        <div class="image-wrapper">
-          <img src="/img/splash.jpg" alt="Tag">
-          <div class="game-title">Tag</div>
+        <div class="game-button" data-src="/play/tag/tag.html">
+          <div class="image-wrapper">
+            <img src="/img/splash.jpg" alt="Tag">
+            <div class="game-title">Tag</div>
+          </div>
         </div>
-      </div>
 
-      <div class="game-button" data-src="/files/basketrandom/index.html">
-        <div class="image-wrapper">
-          <img src="/files/basketrandom/splash.jpeg" alt="Basket Random">
-          <div class="game-title">Basket Random</div>
+        <div class="game-button" data-src="/files/basketrandom/index.html">
+          <div class="image-wrapper">
+            <img src="/files/basketrandom/splash.jpeg" alt="Basket Random">
+            <div class="game-title">Basket Random</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Game Iframe Overlay -->
+  <!-- Iframe Overlay -->
   <div id="iframeOverlay">
     <button onclick="closeIframe()">Close</button>
     <iframe id="gameIframe" src="" allowfullscreen></iframe>
@@ -374,7 +380,7 @@
       overlay.style.display = 'none';
     }
 
-    // Search Functionality
+    // Search
     const searchInput = document.getElementById('searchGames');
     searchInput.addEventListener('input', function () {
       const query = searchInput.value.toLowerCase();
