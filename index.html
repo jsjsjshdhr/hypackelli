@@ -284,63 +284,33 @@
       cursor: pointer;
     }
 
-    /* Auth Styles */
-    .auth-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      background: rgba(0,0,0,0.9);
-      width: 100vw;
-      height: 100vh;
-      z-index: 10000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .auth-container {
-      background: #1a1a1a;
-      padding: 30px;
-      border-radius: 10px;
-      text-align: center;
+    #chatMessages {
       color: white;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: 0 0 10px #000;
+      font-size: 1em;
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 10px;
     }
 
-    .auth-container input {
-      display: block;
-      width: 90%;
-      margin: 10px auto;
+    #chatInput {
+      width: 80%;
       padding: 10px;
-      border-radius: 5px;
-      border: none;
-      font-size: 1em;
-      background: #333;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background-color: #222;
       color: white;
+      font-size: 1.2em;
+      display: block;
+      margin: 0 auto;
     }
 
-    .auth-container button {
-      padding: 10px 20px;
-      background: green;
-      color: white;
-      border: none;
-      font-size: 1em;
-      border-radius: 5px;
-      cursor: pointer;
+    #chatForm {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .auth-container p {
-      margin-top: 10px;
-      cursor: pointer;
-      color: #ccc;
-    }
-
-    .auth-error {
-      color: red;
-      font-size: 0.9em;
-    }
   </style>
 </head>
 <body>
@@ -354,11 +324,11 @@
     <h1>Viper Revamped</h1>
   </div>
 
-  <!-- Navigation Tabs -->
   <div class="nav-tabs">
     <div class="nav-tab" id="homeTab"><i class="fas fa-home"></i> Home</div>
     <div class="nav-tab" id="gamesTab"><i class="fas fa-gamepad"></i> Games</div>
     <div class="nav-tab" id="searchTab"><i class="fas fa-search"></i> Search</div>
+    <div class="nav-tab" id="chatTab"><i class="fas fa-comments"></i> Chat</div>
   </div>
 
   <!-- Games Section -->
@@ -394,140 +364,70 @@
     </div>
   </div>
 
-  <!-- Iframe Overlay -->
-  <div id="iframeOverlay">
-    <button onclick="closeIframe()">Close</button>
-    <iframe id="gameIframe" src="" allowfullscreen></iframe>
-  </div>
-
-  <!-- Login/Signup Modal -->
-  <div id="authModal" class="auth-modal">
-    <div class="auth-container">
-      <h2 id="authTitle">Login</h2>
-      <input type="text" id="authUsername" placeholder="Username" />
-      <input type="password" id="authPassword" placeholder="Password" />
-      <button onclick="handleAuth()">Submit</button>
-      <p id="authSwitch" onclick="toggleAuthMode()">Don't have an account? Sign up</p>
-      <p id="authError" class="auth-error"></p>
+  <!-- Chat Section -->
+  <div id="chatContent" class="content-section">
+    <div id="chatMessages"></div>
+    <div id="chatForm">
+      <input type="text" id="chatInput" placeholder="Enter message..." />
     </div>
   </div>
 
-  <!-- Logout Button -->
-  <button id="logoutBtn" onclick="logout()" style="display:none; position:fixed; bottom:20px; right:20px; z-index:9999; padding:10px 15px; background:red; color:white; border:none; border-radius:8px; cursor:pointer;">
-    Logout
-  </button>
-
   <script>
-    // Loading screen
-    setTimeout(function () {
-      document.querySelector('.loading-overlay').classList.add('loaded');
-      setTimeout(function () {
-        document.querySelector('.loading-overlay').remove();
-        document.querySelector('.title-container').style.visibility = 'visible';
-      }, 1000);
-    }, 10000);
+    const homeTab = document.getElementById("homeTab");
+    const gamesTab = document.getElementById("gamesTab");
+    const searchTab = document.getElementById("searchTab");
+    const chatTab = document.getElementById("chatTab");
+    const gamesContent = document.getElementById("gamesContent");
+    const chatContent = document.getElementById("chatContent");
 
-    // Navigation
-    const tabs = document.querySelectorAll('.nav-tab');
-    const sections = document.querySelectorAll('.content-section');
+    let usernameSet = false;
 
-    tabs.forEach(tab => {
-      tab.addEventListener('click', function () {
-        tabs.forEach(t => t.classList.remove('active'));
-        sections.forEach(section => section.classList.remove('active'));
-        tab.classList.add('active');
-        const activeSectionId = tab.id.replace('Tab', 'Content');
-        const activeSection = document.getElementById(activeSectionId);
-        if (activeSection) {
-          activeSection.classList.add('active');
+    // Event listeners for navigation tabs
+    homeTab.addEventListener("click", function() {
+      gamesContent.classList.remove("active");
+      chatContent.classList.remove("active");
+      homeTab.classList.add("active");
+      gamesTab.classList.remove("active");
+      searchTab.classList.remove("active");
+      chatTab.classList.remove("active");
+    });
+
+    gamesTab.addEventListener("click", function() {
+      gamesContent.classList.add("active");
+      chatContent.classList.remove("active");
+      homeTab.classList.remove("active");
+      gamesTab.classList.add("active");
+      searchTab.classList.remove("active");
+      chatTab.classList.remove("active");
+    });
+
+    chatTab.addEventListener("click", function() {
+      if (!usernameSet) {
+        let username = prompt("Enter your username:");
+        if (username) {
+          usernameSet = true;
+          chatTab.classList.add("active");
+        } else {
+          alert("You need to provide a username to chat.");
         }
-      });
-    });
-
-    // Game click
-    document.querySelectorAll('.game-button').forEach(button => {
-      button.addEventListener('click', () => {
-        const gameSrc = button.getAttribute('data-src');
-        if (gameSrc) {
-          const iframe = document.getElementById('gameIframe');
-          iframe.src = gameSrc;
-          document.getElementById('iframeOverlay').style.display = 'flex';
-        }
-      });
-    });
-
-    function closeIframe() {
-      const overlay = document.getElementById('iframeOverlay');
-      const iframe = document.getElementById('gameIframe');
-      iframe.src = '';
-      overlay.style.display = 'none';
-    }
-
-    // Search
-    const searchInput = document.getElementById('searchGames');
-    searchInput.addEventListener('input', function () {
-      const query = searchInput.value.toLowerCase();
-      const games = document.querySelectorAll('.game-button');
-      games.forEach(game => {
-        const title = game.querySelector('.game-title').textContent.toLowerCase();
-        game.style.display = title.includes(query) ? 'inline-block' : 'none';
-      });
-    });
-
-    // Auth
-    let isSignup = false;
-    window.onload = function () {
-      const currentUser = localStorage.getItem('currentUser');
-      if (!currentUser) {
-        document.getElementById('authModal').style.display = 'flex';
       } else {
-        document.getElementById('logoutBtn').style.display = 'block';
+        gamesContent.classList.remove("active");
+        chatContent.classList.add("active");
+        homeTab.classList.remove("active");
+        gamesTab.classList.remove("active");
+        searchTab.classList.remove("active");
       }
-    };
+    });
 
-    function toggleAuthMode() {
-      isSignup = !isSignup;
-      document.getElementById('authTitle').innerText = isSignup ? 'Sign Up' : 'Login';
-      document.getElementById('authSwitch').innerText = isSignup
-        ? 'Already have an account? Log in'
-        : "Don't have an account? Sign up";
-      document.getElementById('authError').innerText = '';
-    }
-
-    function handleAuth() {
-      const username = document.getElementById('authUsername').value.trim();
-      const password = document.getElementById('authPassword').value.trim();
-      const errorEl = document.getElementById('authError');
-      if (!username || !password) {
-        errorEl.innerText = 'Please fill in both fields.';
-        return;
+    // Handling chat input
+    document.getElementById("chatInput").addEventListener("keypress", function(event) {
+      if (event.key === "Enter" && this.value.trim() !== "") {
+        const newMessage = document.createElement("div");
+        newMessage.textContent = this.value;
+        document.getElementById("chatMessages").appendChild(newMessage);
+        this.value = ""; // clear the input
       }
-      const users = JSON.parse(localStorage.getItem('users') || '{}');
-      if (isSignup) {
-        if (users[username]) {
-          errorEl.innerText = 'Username already taken.';
-          return;
-        }
-        users[username] = password;
-        localStorage.setItem('users', JSON.stringify(users));
-        localStorage.setItem('currentUser', username);
-        document.getElementById('authModal').style.display = 'none';
-        document.getElementById('logoutBtn').style.display = 'block';
-      } else {
-        if (!users[username] || users[username] !== password) {
-          errorEl.innerText = 'Invalid username or password.';
-          return;
-        }
-        localStorage.setItem('currentUser', username);
-        document.getElementById('authModal').style.display = 'none';
-        document.getElementById('logoutBtn').style.display = 'block';
-      }
-    }
-
-    function logout() {
-      localStorage.removeItem('currentUser');
-      location.reload();
-    }
+    });
   </script>
 </body>
 </html>
