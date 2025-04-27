@@ -379,8 +379,19 @@
     const chatTab = document.getElementById("chatTab");
     const gamesContent = document.getElementById("gamesContent");
     const chatContent = document.getElementById("chatContent");
+    const loadingOverlay = document.querySelector(".loading-overlay");
 
     let usernameSet = false;
+
+    // Hide loading overlay after the page loads
+    window.onload = function() {
+      setTimeout(() => {
+        loadingOverlay.style.opacity = '0';
+        setTimeout(() => {
+          loadingOverlay.style.display = 'none';
+        }, 1000); // Wait for opacity transition to complete
+      }, 500); // Add some delay to allow animations to run
+    };
 
     // Event listeners for navigation tabs
     homeTab.addEventListener("click", function() {
