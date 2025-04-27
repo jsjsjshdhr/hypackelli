@@ -283,6 +283,64 @@
       border-radius: 8px;
       cursor: pointer;
     }
+
+    /* Auth Styles */
+    .auth-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: rgba(0,0,0,0.9);
+      width: 100vw;
+      height: 100vh;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auth-container {
+      background: #1a1a1a;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      color: white;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 10px #000;
+    }
+
+    .auth-container input {
+      display: block;
+      width: 90%;
+      margin: 10px auto;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 1em;
+      background: #333;
+      color: white;
+    }
+
+    .auth-container button {
+      padding: 10px 20px;
+      background: green;
+      color: white;
+      border: none;
+      font-size: 1em;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .auth-container p {
+      margin-top: 10px;
+      cursor: pointer;
+      color: #ccc;
+    }
+
+    .auth-error {
+      color: red;
+      font-size: 0.9em;
+    }
   </style>
 </head>
 <body>
@@ -307,7 +365,6 @@
   <div id="gamesContent" class="content-section">
     <div class="games-inner-wrapper">
       <input type="text" class="search-bar" id="searchGames" placeholder="Search games..." />
-
       <div class="games-list">
         <div class="game-button" data-src="/play/liquid/liquid.html">
           <div class="image-wrapper">
@@ -315,28 +372,24 @@
             <div class="game-title">Liquid Soccer</div>
           </div>
         </div>
-
         <div class="game-button" data-src="/play/tag/tag.html">
           <div class="image-wrapper">
             <img src="/img/splash.jpg" alt="Tag">
             <div class="game-title">Tag</div>
           </div>
         </div>
-
         <div class="game-button" data-src="/files/basketrandom/index.html">
           <div class="image-wrapper">
             <img src="/files/basketrandom/splash.jpeg" alt="Basket Random">
             <div class="game-title">Basket Random</div>
           </div>
         </div>
-
         <div class="game-button" data-src="/files/nzp-gay/index.html">
           <div class="image-wrapper">
-            <img src="/img/cod.png" alt="Tag">
+            <img src="/img/cod.png" alt="COD Zombies">
             <div class="game-title">COD Zombies</div>
           </div>
         </div>
-        
       </div>
     </div>
   </div>
@@ -347,7 +400,25 @@
     <iframe id="gameIframe" src="" allowfullscreen></iframe>
   </div>
 
+  <!-- Login/Signup Modal -->
+  <div id="authModal" class="auth-modal">
+    <div class="auth-container">
+      <h2 id="authTitle">Login</h2>
+      <input type="text" id="authUsername" placeholder="Username" />
+      <input type="password" id="authPassword" placeholder="Password" />
+      <button onclick="handleAuth()">Submit</button>
+      <p id="authSwitch" onclick="toggleAuthMode()">Don't have an account? Sign up</p>
+      <p id="authError" class="auth-error"></p>
+    </div>
+  </div>
+
+  <!-- Logout Button -->
+  <button id="logoutBtn" onclick="logout()" style="display:none; position:fixed; bottom:20px; right:20px; z-index:9999; padding:10px 15px; background:red; color:white; border:none; border-radius:8px; cursor:pointer;">
+    Logout
+  </button>
+
   <script>
+    // Loading screen
     setTimeout(function () {
       document.querySelector('.loading-overlay').classList.add('loaded');
       setTimeout(function () {
@@ -356,6 +427,7 @@
       }, 1000);
     }, 10000);
 
+    // Navigation
     const tabs = document.querySelectorAll('.nav-tab');
     const sections = document.querySelectorAll('.content-section');
 
@@ -372,6 +444,7 @@
       });
     });
 
+    // Game click
     document.querySelectorAll('.game-button').forEach(button => {
       button.addEventListener('click', () => {
         const gameSrc = button.getAttribute('data-src');
@@ -400,6 +473,61 @@
         game.style.display = title.includes(query) ? 'inline-block' : 'none';
       });
     });
+
+    // Auth
+    let isSignup = false;
+    window.onload = function () {
+      const currentUser = localStorage.getItem('currentUser');
+      if (!currentUser) {
+        document.getElementById('authModal').style.display = 'flex';
+      } else {
+        document.getElementById('logoutBtn').style.display = 'block';
+      }
+    };
+
+    function toggleAuthMode() {
+      isSignup = !isSignup;
+      document.getElementById('authTitle').innerText = isSignup ? 'Sign Up' : 'Login';
+      document.getElementById('authSwitch').innerText = isSignup
+        ? 'Already have an account? Log in'
+        : "Don't have an account? Sign up";
+      document.getElementById('authError').innerText = '';
+    }
+
+    function handleAuth() {
+      const username = document.getElementById('authUsername').value.trim();
+      const password = document.getElementById('authPassword').value.trim();
+      const errorEl = document.getElementById('authError');
+      if (!username || !password) {
+        errorEl.innerText = 'Please fill in both fields.';
+        return;
+      }
+      const users = JSON.parse(localStorage.getItem('users') || '{}');
+      if (isSignup) {
+        if (users[username]) {
+          errorEl.innerText = 'Username already taken.';
+          return;
+        }
+        users[username] = password;
+        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('currentUser', username);
+        document.getElementById('authModal').style.display = 'none';
+        document.getElementById('logoutBtn').style.display = 'block';
+      } else {
+        if (!users[username] || users[username] !== password) {
+          errorEl.innerText = 'Invalid username or password.';
+          return;
+        }
+        localStorage.setItem('currentUser', username);
+        document.getElementById('authModal').style.display = 'none';
+        document.getElementById('logoutBtn').style.display = 'block';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('currentUser');
+      location.reload();
+    }
   </script>
 </body>
 </html>
